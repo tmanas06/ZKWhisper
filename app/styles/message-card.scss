@@ -4,6 +4,14 @@
   flex-grow: 1;
   overflow-y: scroll;
   max-width: 800px;
+  
+  // Hide scrollbar but keep scroll functionality
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+  
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
 }
 
 .message-card {

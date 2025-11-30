@@ -156,6 +156,14 @@ html, body {
   transition: background-color var(--transition-smooth), color var(--transition-smooth);
   position: relative;
   
+  // Hide all scrollbars globally
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+  
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
+  
   // Subtle animated background pattern with better color context
   &::before {
     content: '';

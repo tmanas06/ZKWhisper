@@ -21,6 +21,14 @@
   align-items: center;
   scroll-behavior: smooth;
   box-sizing: border-box;
+
+  // Hide scrollbar but keep scroll functionality
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
 }
 
 .content {
@@ -58,6 +66,10 @@
   overflow-y: auto;
   overflow-x: hidden;
 
+  // Hide scrollbar but keep scroll functionality
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
+
   // Subtle gradient border on the right
   &::before {
     content: '';
@@ -90,22 +102,9 @@
     z-index: 2;
   }
 
-  // Custom scrollbar
+  // Hide scrollbar for webkit browsers
   &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--border-medium);
-    border-radius: var(--radius-full);
-    
-    &:hover {
-      background: var(--primary-400);
-    }
+    display: none; // Chrome, Safari, Opera
   }
 }
 

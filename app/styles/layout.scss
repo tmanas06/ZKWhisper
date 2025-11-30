@@ -190,6 +190,114 @@ html.dark .logo {
   padding-top: 0.5rem;
 }
 
+.sidebar-nav-actions {
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-light);
+  margin-top: 1rem;
+}
+
+.sidebar-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.08) 0%,
+    rgba(118, 75, 162, 0.06) 100%
+  );
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    z-index: 0;
+  }
+
+  svg,
+  span {
+    position: relative;
+    z-index: 1;
+    transition: all var(--transition-base);
+  }
+
+  svg {
+    font-size: 1.25rem;
+    color: var(--primary-600);
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.12) 0%,
+      rgba(118, 75, 162, 0.1) 100%
+    );
+    border-color: var(--primary-300);
+    color: var(--primary-700);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+
+    svg {
+      color: var(--primary-700);
+      transform: rotate(15deg) scale(1.1);
+    }
+
+    &::before {
+      opacity: 0.1;
+    }
+  }
+
+  &:active {
+    transform: translateX(2px) scale(0.98);
+  }
+}
+
+html.dark .sidebar-nav-actions {
+  border-top-color: var(--border-medium);
+}
+
+html.dark .sidebar-theme-toggle {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.12) 0%,
+    rgba(118, 75, 162, 0.08) 100%
+  );
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+
+  svg {
+    color: var(--primary-400);
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.18) 0%,
+      rgba(118, 75, 162, 0.14) 100%
+    );
+    border-color: var(--primary-400);
+    color: var(--primary-300);
+
+    svg {
+      color: var(--primary-300);
+    }
+  }
+}
+
 .sidebar-nav-footer {
   display: flex;
   flex-direction: row;

@@ -117,6 +117,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               )}
             </div>
 
+            <div className="sidebar-nav-actions">
+              <button
+                onClick={() => {
+                  setIsDark(!isDark);
+                  setIsSidebarOpen(false);
+                }}
+                className="sidebar-theme-toggle"
+                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label="Toggle dark mode"
+              >
+                <IonIcon name={isDark ? "sunny" : "moon"} />
+                <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+              </button>
+            </div>
           </nav>
 
           <p className="sidebar-nav-copyright">

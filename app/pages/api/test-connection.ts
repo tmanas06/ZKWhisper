@@ -12,7 +12,33 @@ export default async function handler(
   let supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  const diagnostics: any = {
+  interface Diagnostics {
+    hasUrl: boolean;
+    hasKey: boolean;
+    urlFormat: string;
+    keyFormat: string;
+    connectionTest: string;
+    urlPreview?: string;
+    urlValue?: string;
+    keyPreview?: string;
+    directUrlTest?: {
+      status?: number;
+      statusText?: string;
+      reachable?: boolean;
+      error?: string;
+      code?: string;
+      name?: string;
+    };
+    error?: string;
+    errorCode?: string;
+    errorDetails?: string;
+    errorHint?: string;
+    tableExists?: boolean;
+    messageCount?: number;
+    errorStack?: string;
+  }
+
+  const diagnostics: Diagnostics = {
     hasUrl: !!supabaseUrl,
     hasKey: !!supabaseKey,
     urlFormat: "unknown",
@@ -31,7 +57,10 @@ export default async function handler(
   supabaseUrl = supabaseUrl.trim().replace(/\/$/, "");
 
   // Check URL format
-  if (supabaseUrl.startsWith("https://") && supabaseUrl.includes(".supabase.co")) {
+  const isValidUrl = supabaseUrl.startsWith("https://") && 
+    supabaseUrl.includes(".supabase.co");
+  
+  if (isValidUrl) {
     diagnostics.urlFormat = "valid";
     diagnostics.urlPreview = supabaseUrl.substring(0, 40) + "...";
   } else {
@@ -64,11 +93,12 @@ export default async function handler(
       statusText: directTest.statusText,
       reachable: directTest.status < 500,
     };
-  } catch (directError: any) {
+  } catch (directError: unknown) {
+    const error = directError as Error & { code?: string };
     diagnostics.directUrlTest = {
-      error: directError.message,
-      code: directError.code,
-      name: directError.name,
+      error: error.message,
+      code: error.code,
+      name: error.name,
       reachable: false,
     };
     console.error("Direct URL test failed:", directError);
@@ -107,10 +137,11 @@ export default async function handler(
       message: "Successfully connected to Supabase",
       diagnostics,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const error = err as Error;
     diagnostics.connectionTest = "error";
-    diagnostics.error = err.message;
-    diagnostics.errorStack = err.stack;
+    diagnostics.error = error.message;
+    diagnostics.errorStack = error.stack;
 
     return res.status(500).json({
       error: "Network error during connection test",

@@ -12,7 +12,10 @@ export const WalletProvider: AnonGroupProvider = {
   generateProof: async (ephemeralKey: EphemeralKey) => {
     // Check if wallet is available
     if (typeof window === "undefined" || !window.ethereum) {
-      throw new Error("No Web3 wallet detected. Please install MetaMask or another compatible wallet (like Coinbase Wallet, WalletConnect, etc.).");
+      const errorMsg = "No Web3 wallet detected. Please install MetaMask " +
+        "or another compatible wallet (like Coinbase Wallet, " +
+        "WalletConnect, etc.).";
+      throw new Error(errorMsg);
     }
 
     const ethereum = window.ethereum;
@@ -21,11 +24,13 @@ export const WalletProvider: AnonGroupProvider = {
     let accounts: string[];
     try {
       accounts = await ethereum.request({ method: "eth_requestAccounts" });
-    } catch (error: any) {
-      if (error.code === 4001) {
-        throw new Error("Wallet connection was rejected. Please approve the connection request.");
+    } catch (error: unknown) {
+      const err = error as { code?: number; message?: string };
+      if (err.code === 4001) {
+        throw new Error("Wallet connection was rejected. " +
+          "Please approve the connection request.");
       }
-      throw new Error(`Failed to connect wallet: ${error.message || "Unknown error"}`);
+      throw new Error(`Failed to connect wallet: ${err.message || "Unknown error"}`);
     }
     
     if (!accounts || accounts.length === 0) {
@@ -35,7 +40,10 @@ export const WalletProvider: AnonGroupProvider = {
     const walletAddress = accounts[0];
     
     // Create a message to sign (using ephemeral pubkey hash as nonce)
-    const message = `ZKWhisper Authentication\n\nEphemeral Key Hash: ${ephemeralKey.ephemeralPubkeyHash.toString()}\n\nThis signature proves you own this wallet address and allows you to post anonymous messages.`;
+    const keyHash = ephemeralKey.ephemeralPubkeyHash.toString();
+    const message = `ZKWhisper Authentication\n\nEphemeral Key Hash: ${keyHash}\n\n` +
+      `This signature proves you own this wallet address and allows you ` +
+      `to post anonymous messages.`;
     
     // Request signature
     let signature: string;
@@ -44,11 +52,13 @@ export const WalletProvider: AnonGroupProvider = {
         method: "personal_sign",
         params: [message, walletAddress],
       });
-    } catch (error: any) {
-      if (error.code === 4001) {
-        throw new Error("Signature request was rejected. Please sign the message to continue.");
+    } catch (error: unknown) {
+      const err = error as { code?: number; message?: string };
+      if (err.code === 4001) {
+        throw new Error("Signature request was rejected. " +
+          "Please sign the message to continue.");
       }
-      throw new Error(`Failed to get signature: ${error.message || "Unknown error"}`);
+      throw new Error(`Failed to get signature: ${err.message || "Unknown error"}`);
     }
 
     // For wallet provider, we use a simplified proof system
@@ -115,7 +125,10 @@ export const WalletProvider: AnonGroupProvider = {
 declare global {
   interface Window {
     ethereum?: {
-      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      request: (args: { 
+        method: string; 
+        params?: unknown[] 
+      }) => Promise<unknown>;
       isMetaMask?: boolean;
       isCoinbaseWallet?: boolean;
       selectedAddress?: string;

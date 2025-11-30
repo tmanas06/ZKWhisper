@@ -30,11 +30,12 @@ export default async function handler(
   try {
     url = new URL(`${supabaseUrl}/rest/v1/`);
     console.log("Parsed URL hostname:", url.hostname);
-  } catch (urlError: any) {
+  } catch (urlError: unknown) {
+    const err = urlError as Error;
     return res.status(500).json({
       error: "Failed to parse URL",
       url: supabaseUrl,
-      errorMessage: urlError.message,
+      errorMessage: err.message,
     });
   }
   
@@ -50,9 +51,8 @@ export default async function handler(
     };
 
     const req = https.request(options, (response) => {
-      let data = "";
-      response.on("data", (chunk) => {
-        data += chunk;
+      response.on("data", () => {
+        // Data not needed for HEAD request
       });
       response.on("end", () => {
         res.status(200).json({
@@ -65,12 +65,13 @@ export default async function handler(
       });
     });
 
-    req.on("error", (error: any) => {
+    req.on("error", (error: Error & { code?: string }) => {
       res.status(500).json({
         error: "HTTPS request failed",
         message: error.message,
         code: error.code,
-        details: "This confirms it's a Node.js SSL/network issue, not a Supabase client issue",
+        details: "This confirms it's a Node.js SSL/network issue, " +
+          "not a Supabase client issue",
       });
       resolve();
     });

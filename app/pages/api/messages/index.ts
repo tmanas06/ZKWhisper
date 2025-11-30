@@ -216,19 +216,34 @@ export async function fetchMessages(
       console.error("Supabase query error:", error);
       
       // Check if it's a network/fetch error
-      if (error.message?.includes("fetch failed") || error.message?.includes("TypeError") || error.code === "ENOTFOUND") {
+      const isNetworkError = error.message?.includes("fetch failed") || 
+        error.message?.includes("TypeError") || 
+        error.code === "ENOTFOUND";
+      
+      if (isNetworkError) {
+        const details = `Failed to connect: ${error.message}. ` +
+          `This is likely a Node.js SSL/certificate issue on Windows. ` +
+          `Try: 1) Check your SUPABASE_URL in .env.local ` +
+          `(should be https://xxxxx.supabase.co with no trailing slash), ` +
+          `2) Restart your dev server, ` +
+          `3) Check Windows Firewall settings for Node.js.`;
+        
         res.status(500).json({ 
           error: "Network error connecting to Supabase",
-          details: `Failed to connect: ${error.message}. This is likely a Node.js SSL/certificate issue on Windows. Try: 1) Check your SUPABASE_URL in .env.local (should be https://xxxxx.supabase.co with no trailing slash), 2) Restart your dev server, 3) Check Windows Firewall settings for Node.js.`,
+          details,
           errorCode: error.code,
         });
         return;
       }
       
       // Other Supabase errors
+      const errorDetails = "Check your Supabase connection and ensure the " +
+        "'messages' table exists. Run the schema.sql file in your " +
+        "Supabase SQL editor.";
+      
       res.status(500).json({ 
         error: error.message,
-        details: "Check your Supabase connection and ensure the 'messages' table exists. Run the schema.sql file in your Supabase SQL editor.",
+        details: errorDetails,
         errorCode: error.code,
       });
     return;
@@ -251,9 +266,13 @@ export async function fetchMessages(
   } catch (error) {
     console.error("Unexpected error in fetchMessages:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorDetails = "This might be a network issue or Supabase " +
+      "configuration problem. Check your SUPABASE_URL and " +
+      "SUPABASE_SERVICE_ROLE_KEY in .env.local";
+    
     res.status(500).json({ 
       error: errorMessage,
-      details: "This might be a network issue or Supabase configuration problem. Check your SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local"
+      details: errorDetails,
     });
     res.end();
   }

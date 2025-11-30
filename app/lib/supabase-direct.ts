@@ -9,16 +9,22 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
-interface SupabaseResponse<T> {
-  data: T | null;
-  error: any | null;
+interface SupabaseError {
+  message: string;
+  code?: string;
+  details?: unknown;
 }
 
-export async function supabaseQuery<T = any>(
+interface SupabaseResponse<T> {
+  data: T | null;
+  error: SupabaseError | null;
+}
+
+export async function supabaseQuery<T = unknown>(
   table: string,
   options: {
     select?: string;
-    eq?: { [key: string]: any };
+    eq?: { [key: string]: unknown };
     order?: { column: string; ascending?: boolean };
     limit?: number;
   } = {}
@@ -64,7 +70,7 @@ export async function supabaseQuery<T = any>(
             // Apply filters if needed
             let filteredData = jsonData;
             if (options.eq) {
-              filteredData = jsonData.filter((item: any) => {
+              filteredData = jsonData.filter((item: Record<string, unknown>) => {
                 return Object.entries(options.eq!).every(([key, value]) => {
                   return item[key] === value;
                 });
@@ -80,8 +86,11 @@ export async function supabaseQuery<T = any>(
       });
     });
 
-    req.on("error", (error) => {
-      resolve({ data: null, error: { message: error.message, code: (error as any).code } });
+    req.on("error", (error: Error & { code?: string }) => {
+      resolve({ 
+        data: null, 
+        error: { message: error.message, code: error.code } 
+      });
     });
 
     req.end();

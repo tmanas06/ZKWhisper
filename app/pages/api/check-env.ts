@@ -31,8 +31,9 @@ export default async function handler(
     try {
       const testUrl = supabaseUrl.endsWith("/") ? supabaseUrl : `${supabaseUrl}/`;
       parsedUrl = new URL(testUrl);
-    } catch (error: any) {
-      parsedUrl = { error: error.message };
+    } catch (error: unknown) {
+      const err = error as Error;
+      parsedUrl = { error: err.message };
     }
   }
   

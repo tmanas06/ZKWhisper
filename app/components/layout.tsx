@@ -117,47 +117,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               )}
             </div>
 
-            <div className="sidebar-nav-footer">
-              <button
-                onClick={() => {
-                  setIsDark(!isDark);
-                  setIsSidebarOpen(false);
-                }}
-                className="sidebar-nav-footer-item"
-              >
-                {isDark ? <IonIcon name="moon" /> : <IonIcon name="sunny" />}
-              </button>
-              <Link
-                onClick={() => setIsSidebarOpen(false)}
-                href="https://github.com/tmanas06/zkwhisper"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="How it works"
-                className="sidebar-nav-footer-item"
-              >
-                <IonIcon name="reader" />
-              </Link>
-              <Link
-                onClick={() => setIsSidebarOpen(false)}
-                className="sidebar-nav-footer-item"
-                target="_blank"
-                title="Source Code"
-                rel="noopener noreferrer"
-                href="https://github.com/tmanas06/zkwhisper"
-              >
-                <IonIcon name="logo-github" />
-              </Link>
-              <Link
-                onClick={() => setIsSidebarOpen(false)}
-                href="https://github.com/tmanas06/zkwhisper"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Twitter"
-                className="sidebar-nav-footer-item"
-              >
-                <IonIcon name="logo-twitter" />
-              </Link>
-            </div>
           </nav>
 
           <p className="sidebar-nav-copyright">

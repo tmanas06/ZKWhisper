@@ -1,0 +1,55 @@
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #dc2626;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-small {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.mt-1 {
+  margin-top: 1rem !important;
+}
+
+.mt-05 {
+  margin-top: 0.5rem !important;
+}
+
+.mt-3 {
+  margin-top: 3rem !important;
+}
+
+.mb-05 {
+  margin-bottom: 0.5rem !important;
+}
+
+.mb-1 {
+  margin-bottom: 1rem !important;
+}
+
+.mb-2 {
+  margin-bottom: 2rem !important;
+}

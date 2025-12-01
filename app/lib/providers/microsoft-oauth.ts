@@ -10,7 +10,7 @@ export const MicrosoftOAuthProvider: AnonGroupProvider = {
   
   getSlug: () => "domain",
   
-  generateProof: async (ephemeralKey: EphemeralKey) => {
+  generateProof: async (ephemeralKey: EphemeralKey, _walletAddress?: string) => {
     // Load Microsoft MSAL script
     await loadMicrosoftOAuthScript();
 

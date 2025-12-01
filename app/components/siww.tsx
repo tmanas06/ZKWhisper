@@ -1,6 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+
+const WalletConnectModal = dynamic(() => import("./wallet-connect-modal"), {
+  ssr: false,
+});
 
 // Wallet icon SVG component
 const WalletIcon = () => (
@@ -33,20 +38,42 @@ const WalletIcon = () => (
   </svg>
 );
 
-const SignWithWalletButton = (props: { onClick: () => void; isLoading: boolean; disabled: boolean }) => {
+const SignWithWalletButton = (props: { 
+  onClick: (address: string) => void; 
+  isLoading: boolean; 
+  disabled: boolean 
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConnect = (address: string) => {
+    props.onClick(address);
+    setIsModalOpen(false);
+  };
+
   return (
-    <button 
-      onClick={() => props.onClick()} 
-      className="message-form-oauth-button message-form-wallet-button" 
-      disabled={props.disabled}
-      title="Connect Web3 Wallet"
-    >
-      {props.isLoading ? (
-        <span className="spinner-icon" style={{ color: "black" }} />
-      ) : (
-        <WalletIcon />
-      )}
-    </button>
+    <>
+      <button 
+        onClick={handleClick} 
+        className="message-form-oauth-button message-form-wallet-button" 
+        disabled={props.disabled}
+        title="Connect Web3 Wallet (MetaMask or WalletConnect)"
+      >
+        {props.isLoading ? (
+          <span className="spinner-icon" style={{ color: "white" }} />
+        ) : (
+          <WalletIcon />
+        )}
+      </button>
+      <WalletConnectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConnect={handleConnect}
+      />
+    </>
   );
 };
 

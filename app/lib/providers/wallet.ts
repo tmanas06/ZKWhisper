@@ -9,35 +9,42 @@ export const WalletProvider: AnonGroupProvider = {
   
   getSlug: () => "wallet",
   
-  generateProof: async (ephemeralKey: EphemeralKey) => {
-    // Check if wallet is available
-    if (typeof window === "undefined" || !window.ethereum) {
-      const errorMsg = "No Web3 wallet detected. Please install MetaMask " +
-        "or another compatible wallet (like Coinbase Wallet, " +
-        "WalletConnect, etc.).";
-      throw new Error(errorMsg);
-    }
+  generateProof: async (
+    ephemeralKey: EphemeralKey,
+    walletAddress?: string
+  ) => {
+    // If wallet address is provided (from wagmi), use it
+    // Otherwise, fall back to window.ethereum for backward compatibility
+    let address = walletAddress;
 
-    const ethereum = window.ethereum;
-    
-    // Request account access
-    let accounts: string[];
-    try {
-      accounts = await ethereum.request({ method: "eth_requestAccounts" });
-    } catch (error: unknown) {
-      const err = error as { code?: number; message?: string };
-      if (err.code === 4001) {
-        throw new Error("Wallet connection was rejected. " +
-          "Please approve the connection request.");
+    if (!address) {
+      if (typeof window === "undefined" || !window.ethereum) {
+        const errorMsg = "No Web3 wallet detected. Please install MetaMask " +
+          "or connect using WalletConnect.";
+        throw new Error(errorMsg);
       }
-      throw new Error(`Failed to connect wallet: ${err.message || "Unknown error"}`);
-    }
-    
-    if (!accounts || accounts.length === 0) {
-      throw new Error("No wallet accounts found. Please unlock your wallet and try again.");
-    }
 
-    const walletAddress = accounts[0];
+      const ethereum = window.ethereum;
+      
+      // Request account access
+      let accounts: string[];
+      try {
+        accounts = await ethereum.request({ method: "eth_requestAccounts" }) as string[];
+      } catch (error: unknown) {
+        const err = error as { code?: number; message?: string };
+        if (err.code === 4001) {
+          throw new Error("Wallet connection was rejected. " +
+            "Please approve the connection request.");
+        }
+        throw new Error(`Failed to connect wallet: ${err.message || "Unknown error"}`);
+      }
+      
+      if (!accounts || accounts.length === 0) {
+        throw new Error("No wallet accounts found. Please unlock your wallet and try again.");
+      }
+
+      address = accounts[0];
+    }
     
     // Create a message to sign (using ephemeral pubkey hash as nonce)
     const keyHash = ephemeralKey.ephemeralPubkeyHash.toString();
@@ -45,16 +52,21 @@ export const WalletProvider: AnonGroupProvider = {
       `This signature proves you own this wallet address and allows you ` +
       `to post anonymous messages.`;
     
-    // Request signature
+    // Request signature using window.ethereum for personal_sign
     let signature: string;
     try {
-      signature = await ethereum.request({
-        method: "personal_sign",
-        params: [message, walletAddress],
-      });
+      if (typeof window !== "undefined" && window.ethereum) {
+        signature = (await window.ethereum.request({
+          method: "personal_sign",
+          params: [message, address],
+        })) as string;
+      } else {
+        throw new Error("Wallet not available. Please connect your wallet first.");
+      }
     } catch (error: unknown) {
       const err = error as { code?: number; message?: string };
-      if (err.code === 4001) {
+      if (err.code === 4001 || err.message?.includes("rejected") || 
+          err.message?.includes("User rejected")) {
         throw new Error("Signature request was rejected. " +
           "Please sign the message to continue.");
       }
@@ -65,18 +77,18 @@ export const WalletProvider: AnonGroupProvider = {
     // The signature itself serves as proof of wallet ownership
     // In a production system, you'd want to use a ZK circuit here
     
-    const anonGroup = WalletProvider.getAnonGroup(walletAddress);
+    const anonGroup = WalletProvider.getAnonGroup(address);
     
     const proofArgs = {
       signature,
       message,
-      walletAddress,
+      walletAddress: address,
     };
 
     // Create a simple proof from the signature (in production, use ZK circuit)
     const proof = new TextEncoder().encode(JSON.stringify({
       signature,
-      walletAddress,
+      walletAddress: address,
       ephemeralPubkeyHash: ephemeralKey.ephemeralPubkeyHash.toString(),
     }));
 

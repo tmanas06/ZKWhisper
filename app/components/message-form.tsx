@@ -9,6 +9,7 @@ import { generateNameFromPubkey } from "../lib/utils";
 import { Providers } from "../lib/providers";
 import SignWithGoogleButton from "./siwg";
 import SignWithWalletButton from "./siww";
+import SignWithPOAPButton from "./siwp";
 // import SignInWithMicrosoftButton from "./siwm";
 
 type MessageFormProps = {
@@ -66,18 +67,28 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
   const [status, setStatus] = useState(!isRegistered ? welcomeMessage : "");
 
   // Handlers
-  async function handleSignIn(providerName: string) {
+  async function handleSignIn(
+    providerName: string, 
+    walletAddress?: string,
+    poapEventId?: string
+  ) {
     try {
       setIsRegistering(providerName);
       
       if (providerName === "wallet") {
         setStatus(`Connecting to your wallet... Please approve the connection and sign the message.`);
+      } else if (providerName === "poap") {
+        setStatus(`Verifying POAP ownership... Please sign the message.`);
       } else {
         setStatus(`Generating cryptographic proof of your membership without revealing your identity.
           This will take about 20 seconds...`);
       }
 
-      const { anonGroup } = await generateKeyPairAndRegister(providerName);
+      const { anonGroup } = await generateKeyPairAndRegister(
+        providerName, 
+        walletAddress,
+        poapEventId
+      );
 
       setCurrentGroupId(anonGroup.id);
       setCurrentProvider(providerName);
@@ -127,8 +138,12 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
 
   const isTextAreaDisabled = !!isRegistering || isPosting || !isRegistered;
   const isWallet = currentProvider === "wallet";
+  const isPOAP = currentProvider === "poap";
 
-  const randomPrompt = prompts(currentGroupId ?? "your company", isWallet)[randomPromptIndex]
+  const randomPrompt = prompts(
+    currentGroupId ?? "your company", 
+    isWallet || isPOAP
+  )[randomPromptIndex]
 
   return (
     <div className="message-form">
@@ -148,7 +163,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
       </div>
 
       <div className="message-form-footer">
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
           <span className="message-form-footer-message">
             {status ? status : `Posting as "${senderName}"`}
           </span>
@@ -171,12 +186,12 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
               </button>
               <button
                 title={
-                  "Delete your identity and start over."
+                  "Switch to a different account (Google, Wallet, or POAP)"
                 }
                 onClick={() => resetIdentity()}
                 tabIndex={-1}
               >
-                <span className="message-form-reset-icon"><IonIcon name="close-outline" /></span>
+                <span className="message-form-reset-icon"><IonIcon name="swap-horizontal-outline" /></span>
               </button>
             </div>
           )}
@@ -202,8 +217,15 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
               disabled={!!isRegistering}
             />
             <SignWithWalletButton
-              onClick={() => handleSignIn("wallet")}
+              onClick={async (address: string) => {
+                await handleSignIn("wallet", address);
+              }}
               isLoading={isRegistering === "wallet"}
+              disabled={!!isRegistering}
+            />
+            <SignWithPOAPButton
+              onClick={(eventId: string) => handleSignIn("poap", undefined, eventId)}
+              isLoading={isRegistering === "poap"}
               disabled={!!isRegistering}
             />
             {/* <SignInWithMicrosoftButton
@@ -213,6 +235,25 @@ const MessageForm: React.FC<MessageFormProps> = ({ isInternal, onSubmit }) => {
             /> */}
           </div>
         )}
+        
+        {/* Always show wallet button for easy access */}
+        {isRegistered && (
+          <div className="message-form-oauth-buttons" style={{ marginLeft: "0.5rem" }}>
+            <SignWithWalletButton
+              onClick={async (address: string) => {
+                await handleSignIn("wallet", address);
+              }}
+              isLoading={isRegistering === "wallet"}
+              disabled={!!isRegistering}
+            />
+            <SignWithPOAPButton
+              onClick={(eventId: string) => handleSignIn("poap", undefined, eventId)}
+              isLoading={isRegistering === "poap"}
+              disabled={!!isRegistering}
+            />
+          </div>
+        )}
+        
       </div>
     </div>
   );

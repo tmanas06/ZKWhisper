@@ -106,7 +106,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   Wallet Chat
                 </Link>
               )}
-              {slug && currentProvider !== "wallet" && (
+              {slug && currentProvider === "poap" && currentGroupId && (
+                <Link
+                  onClick={() => setIsSidebarOpen(false)}
+                  href={`/poap/${currentGroupId.replace("poap-", "")}`}
+                  className="sidebar-nav-item"
+                >
+                  POAP Holders
+                </Link>
+              )}
+              {slug && currentProvider !== "wallet" && currentProvider !== "poap" && (
                 <Link
                   onClick={() => setIsSidebarOpen(false)}
                   href={`/${slug}/${currentGroupId}/internal`}

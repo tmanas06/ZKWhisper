@@ -5,7 +5,9 @@ import { initProver } from "./lazy-modules";
 import { Providers } from "./providers";
 
 export async function generateKeyPairAndRegister(
-  providerName: keyof typeof Providers
+  providerName: keyof typeof Providers,
+  walletAddress?: string,
+  poapEventId?: string
 ) {
   // Initialize prover without await to preload aztec bundle
   initProver();
@@ -15,7 +17,13 @@ export async function generateKeyPairAndRegister(
 
   // Ask the AnonGroup provider to generate a proof
   const provider = Providers[providerName];
-  const { anonGroup, proof, proofArgs } = await provider.generateProof(ephemeralKey);
+  // For POAP provider, we need to pass the eventId through a workaround
+  // since the interface doesn't support it directly
+  const { anonGroup, proof, proofArgs } = await (provider as any).generateProof(
+    ephemeralKey,
+    walletAddress,
+    poapEventId
+  );
 
   // Send proof to server to create an AnonGroup membership
   await createMembership({

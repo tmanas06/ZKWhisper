@@ -1,0 +1,221 @@
+.wallet-connect-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--z-modal);
+  animation: fadeIn 0.2s ease-out;
+  padding: 1rem;
+}
+
+.wallet-connect-modal {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 0;
+  width: 90%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--border-light);
+  animation: slideUp 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wallet-connect-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-light);
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}
+
+.wallet-connect-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+
+  &:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.wallet-connect-modal-content {
+  padding: 2rem;
+}
+
+.wallet-connect-modal-description {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.wallet-connect-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.wallet-connect-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: left;
+  width: 100%;
+  position: relative;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-300);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.wallet-connect-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.wallet-connect-option-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.wallet-connect-option-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.wallet-connect-option-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.wallet-connect-option-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.wallet-connect-no-wallets {
+  text-align: center;
+  padding: 2rem 1rem;
+
+  p {
+    margin: 0 0 1rem 0;
+    color: var(--text-secondary);
+  }
+}
+
+.wallet-connect-install-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-gradient);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  transition: all var(--transition-base);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+html.dark {
+  .wallet-connect-modal {
+    background: var(--bg-secondary);
+    border-color: var(--border-medium);
+  }
+
+  .wallet-connect-modal-header {
+    border-bottom-color: var(--border-medium);
+  }
+
+  .wallet-connect-option {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+
+    &:hover:not(:disabled) {
+      background: var(--bg-primary);
+      border-color: var(--primary-400);
+    }
+  }
+
+  .wallet-connect-option-icon {
+    background: var(--bg-secondary);
+    border-color: var(--border-medium);
+  }
+}
+

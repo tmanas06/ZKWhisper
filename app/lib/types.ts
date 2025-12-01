@@ -36,10 +36,11 @@ export interface AnonGroupProvider {
 
   /**
    * Generate a ZK proof that the current user is a member of an AnonGroup
-   * @param ephemeralPubkeyHash - Hash of the ephemeral pubkey, expiry and salt
+   * @param ephemeralKey - Ephemeral key pair
+   * @param walletAddress - Optional wallet address (for wallet provider)
    * @returns Returns the AnonGroup and membership proof, along with additional args that may be needed for verification
    */
-  generateProof(ephemeralKey: EphemeralKey): Promise<{
+  generateProof(ephemeralKey: EphemeralKey, walletAddress?: string): Promise<{
     proof: Uint8Array;
     anonGroup: AnonGroup;
     proofArgs: object;
@@ -113,4 +114,5 @@ export const LocalStorageKeys = {
   GoogleOAuthNonce: "googleOAuthNonce",
   DarkMode: "darkMode",
   HasSeenWelcomeMessage: "hasSeenWelcomeMessage",
+  HasSeenLandingPage: "hasSeenLandingPage",
 };

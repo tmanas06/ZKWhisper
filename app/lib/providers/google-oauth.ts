@@ -12,7 +12,7 @@ export const GoogleOAuthProvider: AnonGroupProvider = {
   //
   getSlug: () => "domain",
   //
-  generateProof: async (ephemeralKey: EphemeralKey) => {
+  generateProof: async (ephemeralKey: EphemeralKey, _walletAddress?: string) => {
     // Load Google OAuth script
     await loadGoogleOAuthScript();
 

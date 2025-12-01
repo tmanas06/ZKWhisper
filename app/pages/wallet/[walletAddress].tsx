@@ -5,8 +5,8 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useLocalStorage } from "@uidotdev/usehooks";
-import MessageList from "../../../components/message-list";
-import { WalletProvider } from "../../../lib/providers/wallet";
+import MessageList from "../../components/message-list";
+import { WalletProvider } from "../../lib/providers/wallet";
 
 // See messages from wallet users
 export default function WalletPage() {
@@ -49,10 +49,11 @@ export default function WalletPage() {
 
         <MessageList
           groupId={walletAddress.toLowerCase()}
-          showMessageForm={currentGroupId?.toLowerCase() === walletAddress.toLowerCase()}
+          showMessageForm={
+            currentGroupId?.toLowerCase() === walletAddress.toLowerCase()
+          }
         />
       </div>
     </>
   );
 }
-

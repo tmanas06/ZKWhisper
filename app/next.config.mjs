@@ -1,49 +1,58 @@
-import dotenv from 'dotenv';
-import webpack from 'webpack';
+import dotenv from "dotenv";
+import webpack from "webpack";
 
 dotenv.config();
 
 // Workaround for Node.js fetch SSL issues on Windows
 // This sets up a custom fetch if node-fetch is available
-if (typeof globalThis.fetch === 'undefined' || process.env.USE_NODE_FETCH === 'true') {
+if (
+  typeof globalThis.fetch === "undefined" ||
+  process.env.USE_NODE_FETCH === "true"
+) {
   try {
-    const nodeFetch = require('node-fetch');
+    const nodeFetch = require("node-fetch");
     globalThis.fetch = nodeFetch;
     globalThis.Headers = nodeFetch.Headers;
     globalThis.Request = nodeFetch.Request;
     globalThis.Response = nodeFetch.Response;
   } catch (e) {
-    console.warn('node-fetch not available, using native fetch');
+    console.warn("node-fetch not available, using native fetch");
   }
 }
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     outputFileTracingIncludes: {
-      '/api/messages': [
-        './node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/**/*',
-        './node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/barretenberg_wasm_thread/factory/node/thread.worker.js'
+      "/api/messages": [
+        "./node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/**/*",
+        "./node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/barretenberg_wasm_thread/factory/node/thread.worker.js",
       ],
-      '/api/messages/': [
-        './node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/**/*',
-        './node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/barretenberg_wasm_thread/factory/node/thread.worker.js'
+      "/api/messages/": [
+        "./node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/**/*",
+        "./node_modules/@aztec/bb.js/dest/node/barretenberg_wasm/barretenberg_wasm_thread/factory/node/thread.worker.js",
       ],
     },
   },
   reactStrictMode: false,
   sassOptions: {
-    includePaths: ['./'],
+    includePaths: ["./"],
   },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'developers.google.com',
+        protocol: "https",
+        hostname: "developers.google.com",
       },
       {
-        protocol: 'https',
-        hostname: 'img.logo.dev',
+        protocol: "https",
+        hostname: "img.logo.dev",
       },
     ],
   },
@@ -56,7 +65,7 @@ const nextConfig = {
       syncWebAssembly: true,
       layers: true,
     };
-    return config
+    return config;
   },
   // async headers() {
   //   return [

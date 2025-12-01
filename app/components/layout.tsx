@@ -17,11 +17,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     LocalStorageKeys.DarkMode,
     false
   );
-  const [currentGroupId] = useLocalStorage<string | null>(
+  const [currentGroupId, setCurrentGroupId] = useLocalStorage<string | null>(
     LocalStorageKeys.CurrentGroupId,
     null
   );
-  const [currentProvider] = useLocalStorage<string | null>(
+  const [currentProvider, setCurrentProvider] = useLocalStorage<string | null>(
     LocalStorageKeys.CurrentProvider,
     null
   );
@@ -139,6 +139,29 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <IonIcon name={isDark ? "sunny" : "moon"} />
                 <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
               </button>
+              {currentProvider === "wallet" && (
+                <button
+                  onClick={() => {
+                    setCurrentGroupId(null);
+                    setCurrentProvider(null);
+                    if (typeof window !== "undefined") {
+                      try {
+                        window.localStorage.removeItem(LocalStorageKeys.EphemeralKey);
+                      } catch {
+                        // ignore
+                      }
+                    }
+                    setIsSidebarOpen(false);
+                  }}
+                  className="sidebar-theme-toggle"
+                  title="Disconnect wallet and clear current anonymous identity"
+                  aria-label="Disconnect wallet"
+                  style={{ marginTop: "0.5rem" }}
+                >
+                  <IonIcon name="log-out-outline" />
+                  <span>Disconnect Wallet</span>
+                </button>
+              )}
             </div>
           </nav>
 

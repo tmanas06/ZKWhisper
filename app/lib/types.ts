@@ -113,6 +113,5 @@ export const LocalStorageKeys = {
   GoogleOAuthState: "googleOAuthState",
   GoogleOAuthNonce: "googleOAuthNonce",
   DarkMode: "darkMode",
-  HasSeenWelcomeMessage: "hasSeenWelcomeMessage",
   HasSeenLandingPage: "hasSeenLandingPage",
 };

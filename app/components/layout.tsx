@@ -179,11 +179,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </p>
           <div className="sidebar-nav-footer-links">
             <Link
-              href="/disclaimer"
-            >
-              Disclaimer
-            </Link>
-            <Link
               href="/privacy"
             >
               Privacy Policy
